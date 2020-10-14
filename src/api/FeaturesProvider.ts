@@ -18,7 +18,7 @@ export const netFeatures: ITypedMap<IFeature> = {
         enabled: true,
     },
     Three: {
-        regions: ["na", "duck", "cel", "sea", "inf"],
+        regions: ["na", "duck", "cel", "sea", "inf", "origins"],
         enabled: true,
     },
     RequireLogin: {
@@ -31,6 +31,10 @@ export const netFeatures: ITypedMap<IFeature> = {
     },
     Use70Cap: {
         regions: ["duck"],
+        enabled: true,
+    },
+    Use40Cap: {
+        regions: ["origins"],
         enabled: true,
     },
 };

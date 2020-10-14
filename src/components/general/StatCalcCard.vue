@@ -63,6 +63,18 @@ interface IData {
     inputType: string;
 }
 
+function getLevelCap(): number {
+    if (getFeatureState(netFeatures.Use40Cap)) {
+        return 40;
+    }
+    
+    if (getFeatureState(netFeatures.Use70Cap)) {
+        return 70;
+    }
+    
+    return 95;
+}
+
 export default Vue.extend({
     props: {
         "stat": {
@@ -71,7 +83,7 @@ export default Vue.extend({
     },
     data(): IData {
         return {
-            level: getFeatureState(netFeatures.Use70Cap) ? 70 : 95,
+            level: getLevelCap(),
             value: 0,
             percent: 0,
             limits: {

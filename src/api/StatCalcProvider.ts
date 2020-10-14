@@ -49,6 +49,10 @@ class StatCalcProvider implements IStatCalcProvider {
     }
 
     public async calculatePercent(level: number, stat: string, value: number, region?: string): Promise<IStatCalcResult> {
+        if (getFeatureState(netFeatures.Use40Cap) && stat === 'finaldamage') {
+            return await this.calculateExpLinearFdPercent(level, value, region);
+        }
+        
         region = this._ensureRegion(region);
         let caps = await this._getStatCaps(level, region);
         let cap = (<ITypedMap<number>><unknown>caps)[stat];
@@ -61,8 +65,40 @@ class StatCalcProvider implements IStatCalcProvider {
             value: value,
         };
     }
+    
+    private async calculateExpLinearFdPercent(level: number, value: number, region?: string): Promise<IStatCalcResult> {
+        region = this._ensureRegion(region);
+        const caps = await this._getStatCaps(level, region);
+        const cap = (<ITypedMap<number>><unknown>caps)['finalDamage'];
+        const maxPercent = capPercents['finalDamage'];
+
+        /*
+        F1 = 2.2 // exp power
+        F2 = 1 // percent cap
+        F3 = 0.35 // damper
+        CAP = 850 // stat cap
+
+        linear = FD / CAP * F3
+        exp = (FD / CAP) ^ F1 * F2
+
+        result = MIN( MAX(linear, exp), F2)
+        */
+
+        const linear = value / cap * 0.35;
+        const exp = Math.pow(value / cap, 2.2);
+        const percent = Math.min(maxPercent, Math.max(exp, linear, 0));
+        return {
+            capped: percent == maxPercent,
+            percent: percent,
+            value: value,
+        };
+    }
 
     public async calculateValue(level: number, stat: string, percent: number, region?: string): Promise<IStatCalcResult> {
+        if (getFeatureState(netFeatures.Use40Cap) && stat === 'finaldamage') {
+            return await this.calculateExpLinearValue(level, percent, region);
+        }
+        
         region = this._ensureRegion(region);
         let caps = await this._getStatCaps(level, region);
         let cap = (<ITypedMap<number>><unknown>caps)[stat];
@@ -74,6 +110,25 @@ class StatCalcProvider implements IStatCalcProvider {
         return {
             capped: percent == maxPercent,
             percent: percent,
+            value: value,
+        };
+    }
+
+    private async calculateExpLinearValue(level: number, percent: number, region?: string): Promise<IStatCalcResult> {
+        region = this._ensureRegion(region);
+        const caps = await this._getStatCaps(level, region);
+        const cap = (<ITypedMap<number>><unknown>caps)['finalDamage'];
+        
+        const maxPercent = capPercents['finalDamage'];
+        const adjustedPercent = Math.max(0, Math.min(maxPercent, percent));
+        
+        const linear = adjustedPercent / 0.35;
+        const exp = Math.pow(adjustedPercent, 1 / 2.2);
+        const value = Math.min(linear, exp) * cap;
+
+        return {
+            capped: adjustedPercent == maxPercent,
+            percent: adjustedPercent,
             value: value,
         };
     }

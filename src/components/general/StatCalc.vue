@@ -9,8 +9,10 @@
     <h2><ui-string mid="27" :inline="true" alt="Critical"/></h2>
     <stat-calc-card stat="critical" />
 
+    <template v-if="!hideCritDamage">
     <h2><ui-string mid="1000064495" :inline="true" alt="Critical Damage"/></h2>
     <stat-calc-card stat="criticalDamage" />
+    </template>
     
     <h2><ui-string mid="20" :inline="true" alt="Defense"/></h2>
     <stat-calc-card stat="defense" />
@@ -27,7 +29,6 @@ import StatCalcProvider,{ IStatCalcResult } from "@/api/StatCalcProvider";
 import { getFeatureState, netFeatures } from '../../api/FeaturesProvider';
 
 interface IData {
-    globalLvl: number;
     stat: string;
     value: number;
 }
@@ -40,10 +41,14 @@ export default Vue.extend({
     },
     data(): IData {
         return {
-            globalLvl: getFeatureState(netFeatures.Use70Cap) ? 70 : 95,
             stat: "",
             value: 0,
         };
+    },
+    computed: {
+        hideCritDamage(): boolean {
+            return getFeatureState(netFeatures.Use40Cap);
+        },
     },
     created() {
     }
