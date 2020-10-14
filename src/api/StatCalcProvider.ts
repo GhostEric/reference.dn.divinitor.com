@@ -49,7 +49,7 @@ class StatCalcProvider implements IStatCalcProvider {
     }
 
     public async calculatePercent(level: number, stat: string, value: number, region?: string): Promise<IStatCalcResult> {
-        if (getFeatureState(netFeatures.Use40Cap) && stat === 'finaldamage') {
+        if (getFeatureState(netFeatures.Use40Cap) && stat === 'finalDamage') {
             return await this.calculateExpLinearFdPercent(level, value, region);
         }
         
@@ -95,7 +95,7 @@ class StatCalcProvider implements IStatCalcProvider {
     }
 
     public async calculateValue(level: number, stat: string, percent: number, region?: string): Promise<IStatCalcResult> {
-        if (getFeatureState(netFeatures.Use40Cap) && stat === 'finaldamage') {
+        if (getFeatureState(netFeatures.Use40Cap) && stat === 'finalDamage') {
             return await this.calculateExpLinearValue(level, percent, region);
         }
         
