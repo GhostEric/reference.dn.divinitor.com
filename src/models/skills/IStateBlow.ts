@@ -105,6 +105,22 @@ function getBlow(id: number): IStateBlow|null {
 }
 
 export const Blows: ITypedMap<IStateBlow> = {
+    1: {
+        name: "Skill physical damage",
+        describe(effect, value) {
+            if (value) {
+                let amount = Number(value.value);
+                if (!isNaN(amount)) {
+                    return {
+                        text: `Skill gains ${filters.thousands(amount)} physical damage`,
+                        appendDuration: true,
+                    };
+                }
+            }
+
+            return null;
+        }
+    },
     2: {
         name: "Skill physical scaling",
         describe(effect, value) {
@@ -122,14 +138,19 @@ export const Blows: ITypedMap<IStateBlow> = {
             return null;
         }
     },
+    3: statIncrease("Physical defense"),
     4: statIncreasePercent("Physical defense"),
     5: statIncrease("STR"),
     6: statIncrease("AGI"),
     7: statIncrease("INT"),
     8: statIncrease("VIT"),
     9: statIncrease("HP"),
-    12: {
+    10: statIncrease("MP"),
+    11: {
         name: "HP over time",
+    },
+    12: {
+        name: "Percent HP over time",
         describe(effect, value) {
             if (value) {
                 let amount = Number(value.value);
@@ -144,14 +165,17 @@ export const Blows: ITypedMap<IStateBlow> = {
             return null;
         }
     },
+    13: {
+        name: "MP over time",
+    },
     14: {
-        name: "Mana",
+        name: "Percent MP over time",
         describe(effect, value) {
             if (value) {
                 let amount = Number(value.value);
                 if (!isNaN(amount)) {
                     return {
-                        text: `${amount < 0 ? "Drains" : "Restores"} ${filters.percent((amount < 0 ? -1 : 1) * amount, 1)}% mana`,
+                        text: `${amount < 0 ? "Drains" : "Restores"} ${filters.percent((amount < 0 ? -1 : 1) * amount, 1)}% MP`,
                         appendDuration: true,
                     };
                 }
@@ -160,9 +184,25 @@ export const Blows: ITypedMap<IStateBlow> = {
             return null;
         }
     },
+    15: {
+        name: "HP adjustment",
+        describe(effect, value) {
+            if (value) {
+                const v = value.value.split(";");
+                let amount = Number(v[0]);
+                if (!isNaN(amount)) {
+                    return {
+                        text: `${amount < 0 ? "Depletes" : "Heals"} ${filters.thousands((amount < 0 ? -1 : 1) * amount)} HP`,
+                        appendDuration: true,
+                    };
+                }
+            }
 
+            return null;
+        }
+    },
     16: {
-        name: "HP Adjustment",
+        name: "Percent HP adjustment",
         describe(effect, value) {
             if (value) {
                 const v = value.value.split(";");
@@ -178,13 +218,67 @@ export const Blows: ITypedMap<IStateBlow> = {
             return null;
         }
     },
+    17: {
+        name: "MP adjustment",
+        describe(effect, value) {
+            if (value) {
+                const v = value.value.split(";");
+                let amount = Number(v[0]);
+                if (!isNaN(amount)) {
+                    return {
+                        text: `${amount < 0 ? "Depletes" : "Heals"} ${filters.thousands((amount < 0 ? -1 : 1) * amount)} MP`,
+                        appendDuration: true,
+                    };
+                }
+            }
 
+            return null;
+        }
+    },
+    18: {
+        name: "Percent MP adjustment",
+        describe(effect, value) {
+            if (value) {
+                const v = value.value.split(";");
+                let amount = Number(v[0]);
+                if (!isNaN(amount)) {
+                    return {
+                        text: `${amount < 0 ? "Depletes" : "Heals"} ${filters.percent((amount < 0 ? -1 : 1) * amount, 1)}% MP`,
+                        appendDuration: true,
+                    };
+                }
+            }
+
+            return null;
+        }
+    },
+    19: statIncrease("Para"),
+    20: statIncrease("Para resist"),
     21: statIncrease("Critical"),
-
+    22: statIncrease("Critical resist"),
+    23: statIncrease("Stun"),
+    24: statIncrease("Stun resist"),
     25: statIncreasePercent("Animation speed"),
+    26: statIncrease("Down delay"),
 
+    28: {
+        name: "Skill magic damage",
+        describe(effect, value) {
+            if (value) {
+                let amount = Number(value.value);
+                if (!isNaN(amount)) {
+                    return {
+                        text: `Skill gains ${filters.thousands(amount)} magic damage`,
+                        appendDuration: true,
+                    };
+                }
+            }
+
+            return null;
+        }
+    },
     29: {
-        name: "Skill magical scaling",
+        name: "Skill magic scaling",
         describe(effect, value) {
             if (value) {
                 let amount = Number(value.value);
@@ -199,11 +293,17 @@ export const Blows: ITypedMap<IStateBlow> = {
 
             return null;
         }
-    },
-
+    }, 
+    30: statIncreasePercent("Block chance"),
     31: statIncreasePercent("Parrying chance"),
-
+    32: statIncreasePercent("Fire attack"),
+    33: statIncreasePercent("Ice attack"),
     34: statIncreasePercent("Light attack"),
+    35: statIncreasePercent("Dark attack"),
+    36: statIncreasePercent("Fire resist"),
+    37: statIncreasePercent("Ice resist"),
+    38: statIncreasePercent("Light resist"),
+    39: statIncreasePercent("Dark resist"),
 
     41: {
         name: "Ice Stack",
@@ -283,6 +383,22 @@ export const Blows: ITypedMap<IStateBlow> = {
             return null;
         }
     },
+    45: {
+        name: "Sleep",
+        describe(effect, value) {
+            if (value) {
+                let v = value.value;
+                let chance = Number(v) * 100;
+
+                return {
+                    text: `${chance}% chance to afflict sleep`,
+                    appendDuration: true,
+                };
+            }
+
+            return null;
+        }
+    },
 
     55: {
         name: "Health barrier",
@@ -308,8 +424,15 @@ export const Blows: ITypedMap<IStateBlow> = {
         },
     },
 
-    58: statIncreasePercent("Max HP"),
+    57: {
+        name: "Revive",
+    },
 
+    58: statIncreasePercent("Max HP"),
+    59: statIncreasePercent("Max MP"),
+    60: {
+        name: "Chain lightning effect",
+    },
     61: {
         name: "Super armor increase",
         describe(effect, value) {
@@ -326,7 +449,6 @@ export const Blows: ITypedMap<IStateBlow> = {
             return null;
         }
     },
-
     62: {
         name: "Apply layered action",
         describe(effect, value) {
@@ -340,7 +462,20 @@ export const Blows: ITypedMap<IStateBlow> = {
             return null;
         },
     },
-
+    63: {
+        name: "Petrify",
+    },
+    64: statIncreasePercent("Super armor"),
+    65: statIncrease("Range"),
+    66: {
+        name: "Threat on hit"
+    },
+    67: {
+        name: "Skill restriction"
+    },
+    68: {
+        name: "MP refund"
+    },
     69: {
         name: "Cleanse",
         describe(effect, value) {
@@ -354,12 +489,26 @@ export const Blows: ITypedMap<IStateBlow> = {
             return null;
         }
     },
-
     70: {
         name: "Cannot move",
     },
+    71: {
+        name: "Cannot act",
+    },
+    72: {
+        name: "Cooldown",
+    },
+    73: {
+        name: "Invisibility",
+    },
+    74: {
+        name: "Maximum damage",
+    },
     75: statIncrease("Movement speed"),
     76: statIncreasePercent("Movement speed"),
+    77: {
+        name: "Effect immunity",
+    },
     78: {
         name: "Silenced",
         describe(effect, value) {
@@ -369,15 +518,20 @@ export const Blows: ITypedMap<IStateBlow> = {
             };
         },
     },
+    82: {
+        name: "[DEPRECATED] Percent FD",
+    },
     83: {
         name: "Buff wipe",
         describe(effect, value) {
             return null;
         }
     },
-
+    84: {
+        name: "Forced action",
+    },
     86: {
-        name: "Lovesick",
+        name: "Team switch",
         describe: (e, v) => ({
             text: "Lovesick",
             appendDuration: true,
@@ -388,6 +542,7 @@ export const Blows: ITypedMap<IStateBlow> = {
     89: statIncreasePercent("INT"),
     90: statIncreasePercent("VIT"),
 
+    93: statIncrease("Magic defense"),
     94: statIncreasePercent("Magic defense"),
     96: {
         name: "Skill Cooldown",
@@ -495,15 +650,40 @@ export const Blows: ITypedMap<IStateBlow> = {
             return null;
         }
     },
+    115: {
+        name: "Poison detonate",
+    },
+    116: {
+        name: "Burn detonate",
+    },
+    117: {
+        name: "Frozen detonate",
+    },
+    118: {
+        name: "Electric detonate",
+    },
 
-    126: statIncreasePercent("Critical Resist"),
+    121: {
+        name: "Replace Stand action",
+    },
 
+    123: statIncreasePercent("Paralyze"),
+    124: statIncreasePercent("Paralyze resist"),
+    125: statIncreasePercent("Critical"),
+    126: statIncreasePercent("Critical resist"),
+    127: statIncreasePercent("Stun"),
+    128: statIncreasePercent("Stun resist"),
     129: { name: "Use alternative action names", describe: () => ({
             text: "Apply action name changer from skill processor",
             appendDuration: true,
         }),
     },
-
+    130: {
+        name: "Post-stage clear effect",
+    },
+    131: {
+        name: "Change weight",
+    },
     132: {
         name: "Provoke",
         describe(effect, value) {
@@ -520,10 +700,23 @@ export const Blows: ITypedMap<IStateBlow> = {
             return null;
         }
     },
-
+    133: {
+        name: "Forced stun",
+    },
     134: statIncreasePercent("Physical damage taken", -1),
     135: statIncreasePercent("Magic damage taken", -1),
 
+    137: {
+        name: "Death defied",
+    },
+    138: {
+        name: "Ignore iframes",
+        describe(effect, value) {
+            return {
+                text: `Ignores target iframe state except when granted by effect 99`,
+            };
+        },
+    },
     139: statIncreasePercent("MP consumption"),
 
     141: {
