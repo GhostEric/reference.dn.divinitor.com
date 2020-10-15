@@ -12,6 +12,7 @@ import UiStringProvider, { IBulkResponse } from './UiStringProvider';
 import IItemState, { zip } from '@/models/items/IItemState';
 import { ItemState } from '@/models/items/ItemEnums';
 import { ensureRegion } from '@/util/Utils';
+import TableProvider from './TableProvider';
 
 export interface ITitleProvider {
     getTitle(titleId: number, region?: string): Promise<ITitle>;
@@ -21,21 +22,20 @@ class TitleProvider implements ITitleProvider {
     
     public async getTitle(titleId: number, region?: string): Promise<ITitle> {
         region = ensureRegion(region);
-        const { data: resp } = await ApiHttpClient.get<ITitleApiResponse>(`/server/${region}/tables/appellationtable/${titleId}`);
-
-        const msgs: IBulkResponse = await UiStringProvider.getBulk([
-            {
-                id: resp._NameID,
-            },
-            {
-                id: resp._DescriptionID,
-            },
-        ]);
+        const resp = await TableProvider.getTableRow<ITitleApiResponse>('appellationtable', titleId, region, {
+            uiresolve: ['_NameID', '_DescriptionID'],
+        });
 
         const ret: ITitle = {
             id: resp.id,
-            name: msgs[resp._NameID],
-            description: msgs[resp._DescriptionID],
+            name: {
+                id: resp._NameID,
+                message: resp._NameID_txt || `M:${resp._NameID}`,
+            },
+            description: {
+                id: resp._DescriptionID,
+                message: resp._DescriptionID === 0 ? '' : resp._DescriptionID_txt || `M:${resp._DescriptionID}`,
+            },
             requiredLevel: resp._LevelLimit,
             type: resp._Type,
             skillLinkItemId: resp._SkillLinkItemID,

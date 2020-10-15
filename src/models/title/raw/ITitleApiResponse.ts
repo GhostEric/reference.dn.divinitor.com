@@ -1,8 +1,11 @@
-export default interface ITitleApiResponse {
-    id: number;
+import ITableRow from '@/models/table/ITableRow';
+
+export default interface ITitleApiResponse extends ITableRow {
     _NameID: number;
+    _NameID_txt?: string;
     _LevelLimit: number;
     _DescriptionID: number;
+    _DescriptionID_txt?: string;
     _Color: number;
     _Type: number;
     _ColorValue: string;
