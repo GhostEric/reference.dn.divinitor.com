@@ -10,6 +10,7 @@ import UiStringProvider, { IBulkResponse } from './UiStringProvider';
 import IItemState, { zip } from '@/models/items/IItemState';
 import { ItemState } from '@/models/items/ItemEnums';
 import { ensureRegion } from '@/util/Utils';
+import TableProvider from './TableProvider';
 
 export interface IItemProvider {
 
@@ -21,18 +22,19 @@ class ItemProvider implements IItemProvider {
     public async getItemCharmRequiredKeys(charmItemId: number, region?: string): Promise<[number, number][]> {
         region = ensureRegion(region);
 
-        const { data: resp } = await ApiHttpClient.get<number[]>(`/server/${region}/tables/charmitemkeytable/columns/_CharmItemID/eq/${charmItemId}`);
+        const resp = await TableProvider.getTableRowsMatching<ICharmItemKeyApiResponse>('charmitemkeytable', '_CharmItemID', 'eq', charmItemId, region);
+        
         const rowId = resp.find(() => true);
-        if (rowId) {
-            const { data, status } = await ApiHttpClient.get<ICharmItemKeyApiResponse>(`/server/${region}/tables/charmitemkeytable/${rowId}`);
-
-            const keyer = (n: number) => `_Key${n}`;
-            const keyCoster = (n: number) => `_Key${n}cost`;
+        if (resp.length > 0) {
+            const data = resp[0];
+            
+            const keyer = (n: number) => `_Key${n}` as keyof ICharmItemKeyApiResponse;
+            const keyCoster = (n: number) => `_Key${n}cost` as keyof ICharmItemKeyApiResponse;
 
             const ret: [number, number][] = [];
             for (let i = 1; i <= 5; ++i) {
-                const keyId = data[keyer(i)];
-                const keyCost = data[keyCoster(i)];
+                const keyId = Number(data[keyer(i)]);
+                const keyCost = Number(data[keyCoster(i)]);
                 if (keyId && keyCost) {
                     ret.push([keyId, keyCost]);
                 }

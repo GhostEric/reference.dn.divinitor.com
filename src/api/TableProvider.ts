@@ -14,6 +14,7 @@ export interface IOptions {
     uiresolve?: string[];
     fileresolve?: string[];
     select?: string[];
+    limit?: number;
 }
 
 export interface ITableProvider {
@@ -63,6 +64,7 @@ class TableProvider implements ITableProvider {
                 uiresolve: (opt && opt.uiresolve) ? opt.uiresolve.join(',') : undefined,
                 fileresolve: (opt && opt.fileresolve) ? opt.fileresolve.join(',') : undefined,
                 select: (opt && opt.select) ? opt.select.join(',') : undefined,
+                limit: (opt && opt.limit) ? opt.limit : undefined,
             }
         });
 
@@ -85,18 +87,19 @@ class TableProvider implements ITableProvider {
                 uiresolve: (opt && opt.uiresolve) ? opt.uiresolve.join(',') : undefined,
                 fileresolve: (opt && opt.fileresolve) ? opt.fileresolve.join(',') : undefined,
                 select: (opt && opt.select) ? opt.select.join(',') : undefined,
+                limit: (opt && opt.limit) ? opt.limit : undefined,
             }
         });
 
         return resp.data;
     }
     
-    public async getTable<T extends ITableRow>(tableName: string, region?: string): Promise<T[]> {
+    public async getTable<T extends ITableRow>(tableName: string, region?: string, limit: number = 9000): Promise<T[]> {
         region = this._ensureRegion(region);
 
         const resp = await ApiHttpClient.get<T[]>(`/server/${region}/tables/${tableName}`, {
             params: {
-                limit: 9000,
+                limit,
             }
         });
 

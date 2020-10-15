@@ -6,6 +6,7 @@ import store from '@/store';
 import IItemShop, { IItemShopTab, IItemShopTabEntry } from '@/models/items/IItemShop';
 import ICombinedShopTableRow from '@/models/items/raw/ICombinedShopTableRow';
 import UiStringProvider from './UiStringProvider';
+import TableProvider from './TableProvider';
 
 export interface IShopProvider {
     
@@ -30,7 +31,10 @@ class ShopProvider implements IShopProvider {
         }
         
         return this._shopReqCache.tryCache(key, async () => {
-            const res = (await ApiHttpClient.get<ICombinedShopTableRow[]>(`server/${region}/tables/virt.combinedshoptable/columns/_ShopID/eq/${id}/data?limit=2000`, {})).data;
+            const res = await TableProvider.getTableRowsMatching<ICombinedShopTableRow>('virt.combinedshoptable', '_ShopID', 'eq', id, region, {
+                limit: 2000,
+            });
+
             const ret: IItemShop = {
                 id,
                 tabs: [],

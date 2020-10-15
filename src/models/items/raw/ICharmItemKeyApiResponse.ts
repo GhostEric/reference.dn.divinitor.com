@@ -1,5 +1,6 @@
-export default interface ICharmItemKeyApiResponse {
-    id: number;
+import ITableRow from '@/models/table/ITableRow';
+
+export default interface ICharmItemKeyApiResponse extends ITableRow {
     _CharmItemID: number;
     _Key1: number;
     _Key2: number;
@@ -11,6 +12,4 @@ export default interface ICharmItemKeyApiResponse {
     _Key3cost: number;
     _Key4cost: number;
     _Key5cost: number;
-
-    [s: string]: number;
 }

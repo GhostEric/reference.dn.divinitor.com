@@ -1,5 +1,6 @@
-export default interface ICombinedShopTableRow {
-    rowId: number;
+import ITableRow from '@/models/table/ITableRow';
+
+export default interface ICombinedShopTableRow extends ITableRow {
     _ShopID: number;
     _TabID: number;
     _TabNameID: number;
