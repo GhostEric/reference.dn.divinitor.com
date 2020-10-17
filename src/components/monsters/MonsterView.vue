@@ -136,7 +136,7 @@
                     <th>Immunity Rate</th>
                 </thead>
                 <tr v-for="(v, i) of immunities" :key="i">
-                    <th>{{ v.stateEffectId }}</th>
+                    <th>{{ v.name }}</th>
                     <td>{{ v.immuneRateInt }}%</td>
                 </tr>
             </table>
@@ -158,6 +158,7 @@ import SkillStubLink from '@/components/skill/SkillStubLink.vue';
 import LegacyMonsterProvider from '@/api/MonsterProvider';
 import ILegacyMonster, { ILegacyMonsterDifficulty, ILegacyMonsterImmunity } from '@/models/monsters/ILegacyMonster';
 import IMonsterSkillEntry from '@/models/monsters/IMonsterSkillEntry';
+import { Blows } from '@/models/skills/IStateBlow';
 
 interface IData {
     loading: boolean;
@@ -165,6 +166,10 @@ interface IData {
     monster: ILegacyMonster|null;
     skills: IMonsterSkillEntry[];
     skillFilter: string;
+}
+
+interface ILegacyMonsterImmunityEx extends ILegacyMonsterImmunity {
+    name: string;
 }
 
 export default Vue.extend({
@@ -241,12 +246,17 @@ export default Vue.extend({
             
             return this.skills;
         },
-        immunities(): ILegacyMonsterImmunity[] {
+        immunities(): ILegacyMonsterImmunityEx[] {
             if (!this.monster) {
                 return [];
             }
             
-            return this.monster.immunities.sort((a, b) => a.stateEffectId - b.stateEffectId);
+            return this.monster.immunities.sort((a, b) => a.stateEffectId - b.stateEffectId).map((im) => {
+                return {
+                    ...im,
+                    name: Blows[im.stateEffectId].name ?? `Unk ${im.stateEffectId}`,
+                }
+            });
         }
     },
     watch: {
