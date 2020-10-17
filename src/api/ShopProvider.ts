@@ -57,7 +57,7 @@ class ShopProvider implements IShopProvider {
                     const entries = res.filter((r) => r._TabID === tabId);
                     for (let e of entries) {
                         const entry: IItemShopTabEntry = {
-                            id: e.rowId,
+                            id: e.id,
                             index: e._ListID,
                             itemId: e._itemindex,
                             quantity: e._Quantity,
