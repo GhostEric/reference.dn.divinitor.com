@@ -254,7 +254,7 @@ export default Vue.extend({
             return this.monster.immunities.sort((a, b) => a.stateEffectId - b.stateEffectId).map((im) => {
                 return {
                     ...im,
-                    name: Blows[im.stateEffectId] && Blows[im.stateEffectId].name || `Unk ${im.stateEffectId}`,
+                    name: Blows[im.stateEffectId] && Blows[im.stateEffectId].name ? `${Blows[im.stateEffectId].name} (${im.stateEffectId})` : `Unk ${im.stateEffectId}`,
                 }
             });
         }
