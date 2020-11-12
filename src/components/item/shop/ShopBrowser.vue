@@ -17,6 +17,7 @@
             <div class="item-grid">
                 <div class="grid-entry"
                     v-for="(slot, i) of currentPageSlots"
+                    :class="highlight.findIndex((sl) => i === sl) !== -1 ? 'highlight' : ''"
                     :key="i">
                     <template v-if="slot">
                         <item-icon-tooltip
@@ -128,6 +129,12 @@ export default Vue.extend({
             type: Boolean as () => boolean,
             default: false,
         },
+        highlight: {
+            type: Array as () => number[],
+            default() {
+                return [];
+            },
+        }
     },
     components: {
         Loader,
@@ -286,6 +293,24 @@ export default Vue.extend({
 
                     &:hover {
                         background: fade(@dv-c-background, 40%);
+                    }
+                    
+                    &.highlight {
+                        outline: 2px solid;
+                        outline-offset: -2px;
+                        animation: pulse 1s infinite;
+                        
+                        @keyframes pulse {
+                            0% {
+                                outline-color: @dv-c-idle;
+                            }
+                            50% {
+                                outline-color: @dv-c-green;
+                            }
+                            100% {
+                                outline-color: @dv-c-idle;
+                            }
+                        }
                     }
 
                     .purchase-details {

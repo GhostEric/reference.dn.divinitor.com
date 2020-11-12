@@ -18,6 +18,13 @@ module.exports = {
                 pathRewrite: {
                     '^/localapi': '/api'
                 }
+            },
+            '/dapi': {
+                target: 'https://reference.fatduckdn.com',
+                changeOrigin: true,
+                pathRewrite: {
+                    '^/dapi': '/api'
+                }
             }
         }
     },

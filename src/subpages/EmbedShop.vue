@@ -1,6 +1,6 @@
 <template>
 <div class="embed-shop">
-    <shop-browser v-if="valid" :shopId="shopId" :useClick="false" @click="itemClick"/>
+    <shop-browser v-if="valid" :shopId="shopId" :useClick="false" @click="itemClick" :highlight="highlight"/>
     <a href="#" class="hidden" ref="link" target="_blank"/>
 </div>
 </template>
@@ -14,6 +14,7 @@ import { IItemShopTabEntry } from '@/models/items/IItemShop';
 interface IData {
     shopId: number;
     domain: string;
+    highlight: number[];
 }
 
 export default Vue.extend({
@@ -24,6 +25,7 @@ export default Vue.extend({
         return {
             shopId: 0,
             domain: '',
+            highlight: [],
         };
     },
     computed: {
@@ -34,6 +36,10 @@ export default Vue.extend({
     mounted() {
         this.shopId = Number(this.$route.query.shopId);
         this.domain = this.$route.query.domain;
+        const hl = this.$route.query.hl;
+        if (hl) {
+            this.highlight = String(hl).split(',').map((v) => Number(v)).filter((v) => !isNaN(v));
+        }
     },
     methods: {
         itemClick(slot: IItemShopTabEntry) {
