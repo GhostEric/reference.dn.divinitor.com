@@ -18,7 +18,7 @@
         <span class="value" v-else-if="effect.effectApplyTypeStr == 'ALLY'">allies</span>
     </div>
     <div class="describe">
-        {{ description }} <span class="raw">"{{ value.value }}"</span>
+        {{ description }} <span class="raw">"{{ value.value }}" apply to {{ effect.effectApplyType }}</span>
     </div>
 </div>
 </template>
